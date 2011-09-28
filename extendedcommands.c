@@ -753,6 +753,8 @@ void show_advanced_menu()
     };
 
     static char* list[] = { "Reboot Recovery",
+                            "Reboot to Download mode",
+			    "Power Off",
                             "Wipe Dalvik Cache",
                             "Wipe Battery Stats",
                             "Report Error",
@@ -762,7 +764,6 @@ void show_advanced_menu()
                             "Fix Permissions",
 #endif
                             "Restart adbd",
-                            "Reboot to Download mode",
                             NULL
     };
 
@@ -777,6 +778,12 @@ void show_advanced_menu()
                 __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "recovery");
                 break;
             case 1:
+                __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");
+                break;
+            case 2:
+                __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_POWER_OFF, NULL);
+                break;
+            case 3:
             {
                 if (0 != ensure_root_path_mounted("DATA:"))
                     break;
@@ -791,16 +798,16 @@ void show_advanced_menu()
                 ui_print("Dalvik Cache wiped.\n");
                 break;
             }
-            case 2:
+            case 4:
             {
                 if (confirm_selection( "Confirm wipe?", "Yes - Wipe Battery Stats"))
                     wipe_battery_stats();
                 break;
             }
-            case 3:
+            case 5:
                 handle_failure(1);
                 break;
-            case 4:
+            case 6:
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
@@ -815,7 +822,7 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 5:
+            case 7:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",
@@ -858,7 +865,7 @@ void show_advanced_menu()
                     ui_print("An error occured while partitioning your SD Card. Please see /tmp/recovery.log for more details.\n");
                 break;
             }
-            case 6:
+            case 8:
             {
                 ensure_root_path_mounted("SYSTEM:");
                 ensure_root_path_mounted("DATA:");
@@ -867,12 +874,11 @@ void show_advanced_menu()
                 ui_print("Done!\n");
                 break;
             }
-            case 7:
+            case 9:
             {
                 __system("killall adbd");
                 break;
             }
-            case 8: __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "download");break;
         }
     }
 }
