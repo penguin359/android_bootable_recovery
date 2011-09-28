@@ -353,6 +353,10 @@ void show_mount_usb_storage_menu()
     char command[PATH_MAX];
     sprintf(command, "echo %s > /sys/devices/platform/s3c-usbgadget/gadget/lun1/file", BOARD_SDCARD_DEVICE_PRIMARY);
     __system(command);
+#ifdef BOARD_HAS_EXTERNAL_SDCARD
+    sprintf(command, "echo %s > /sys/devices/platform/s3c-usbgadget/gadget/lun2/file", BOARD_SDCARD_DEVICE_SECONDARY);
+    __system(command);
+#endif
     static char* headers[] = {  "USB Mass Storage device",
                                 "Leaving this menu unmount",
                                 "your SD card from your PC.",
@@ -371,6 +375,10 @@ void show_mount_usb_storage_menu()
 
     __system("echo '' > /sys/devices/platform/s3c-usbgadget/gadget/lun1/file");
     __system("echo 0 > /sys/devices/platform/s3c-usbgadget/gadget/lun1/file");
+#ifdef BOARD_HAS_EXTERNAL_SDCARD
+    __system("echo '' > /sys/devices/platform/s3c-usbgadget/gadget/lun2/file");
+    __system("echo 0 > /sys/devices/platform/s3c-usbgadget/gadget/lun2/file");
+#endif
 }
 
 int confirm_selection(const char* title, const char* confirm)
@@ -446,6 +454,9 @@ void show_partition_menu()
         { "mount /data", "unmount /data", "DATA:" },
         { "mount /cache", "unmount /cache", "CACHE:" },
         { "mount /sdcard", "unmount /sdcard", "SDCARD:" },
+#ifdef BOARD_HAS_EXTERNAL_SDCARD
+        { "mount /sdcard/external_sd", "unmount /sdcard/external_sd", "EXSDCARD:" },
+#endif
         { "mount /sd-ext", "unmount /sd-ext", "SDEXT:" }
         };
 
@@ -457,7 +468,12 @@ void show_partition_menu()
     };
 
     string mmcs[MMC_COUNT][3] = {
+#ifdef BOARD_HAS_EXTERNAL_SDCARD
+      { "format internal sdcard", "SDCARD:" },
+      { "format external sdcard", "EXSDCARD:" },
+#else
       { "format sdcard", "SDCARD:" },
+#endif
       { "format sd-ext", "SDEXT:" }
     };
 
